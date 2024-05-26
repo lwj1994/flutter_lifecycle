@@ -1,16 +1,41 @@
-# flutter_lifecyle
-
-A new Flutter project.
-
+inspired by android.lifecycle
 ## Getting Started
 
-This project is a starting point for a Flutter application.
-
-A few resources to get you started if this is your first Flutter project:
-
-- [Lab: Write your first Flutter app](https://docs.flutter.dev/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://docs.flutter.dev/cookbook)
-
-For help getting started with Flutter development, view the
-[online documentation](https://docs.flutter.dev/), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
+```dart
+LifecycleAware(
+        observer: LifecycleObserver(onCreate: (l) {
+          print("\n");
+          print("onCreate");
+          print("old = ${l.previousState.name}");
+          print(l.currentState.name);
+        }, onVisible: (l) {
+          print("\n");
+          print("onVisible");
+          print("old = ${l.previousState.name}");
+          print(l.currentState.name);
+        }, onBackground: (l) {
+          print("\n");
+          print("onBackground");
+          print("old = ${l.previousState.name}");
+          print(l.currentState.name);
+        },onDispose: (l){
+          print("\n");
+          print("onDispose");
+          print("old = ${l.previousState.name}");
+          print(l.currentState.name);
+        },onForeground: (l){
+          print("\n");
+          print("onForeground");
+          print("old = ${l.previousState.name}");
+          print(l.currentState.name);
+        },onInvisible: (l){
+          print("\n");
+          print("onInvisible");
+          print("old = ${l.previousState.name}");
+          print(l.currentState.name);
+        }),
+        builder: (BuildContext context, Lifecycle lifecycle) {
+          return Center();
+        },
+      )
+```
