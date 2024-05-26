@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:focus_detector_v2/focus_detector_v2.dart';
-import 'package:lifecycle/lifecycle.dart';
 
 import 'lifecycle.dart' as lifecycle_lifecycle;
 import 'lifecycle_registry.dart';
+import 'observer.dart';
 import 'state.dart' as lifecycle_state;
 
 class LifecycleAware extends StatefulWidget {

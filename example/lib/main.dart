@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:lifecycle/lifecycle.dart';
+import 'package:widget_lifecycle/widget_lifecycle.dart';
 
 void main() {
   runApp(const MyApp());
