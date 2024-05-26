@@ -1,7 +1,5 @@
 import 'dart:collection';
 
-import 'package:collection/collection.dart';
-
 import 'lifecycle.dart';
 import 'observer.dart';
 import 'state.dart';
@@ -102,14 +100,14 @@ class LifecycleRegistry extends Lifecycle {
   LifecycleState calculateTargetState(Observer observer) {
     final entries = _observerMap.entries.toList();
     MapEntry<Observer, ObserverWithState>? previous;
-    entries.forEachIndexed((index, element) {
+    for (int index = 0; index < entries.length; index++) {
+      final element = entries[index];
       if (identical(element.key, observer)) {
         if (index - 1 >= 0) {
           previous = entries[index - 1];
         }
       }
-    });
-
+    }
     LifecycleState? siblingState = previous?.value.state;
     LifecycleState? parentState =
         _parentStates.isNotEmpty ? _parentStates.last : null;
