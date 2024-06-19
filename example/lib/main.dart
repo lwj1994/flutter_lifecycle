@@ -77,85 +77,223 @@ class _MyHomePageState extends State<MyHomePage> {
     // The Flutter framework has been optimized to make rerunning build methods
     // fast, so that you can just rebuild anything that needs updating rather
     // than having to individually change instances of widgets.
+    return LifecycleExample();
+  }
+}
+
+class LifecycleExample extends StatefulWidget {
+  @override
+  State<StatefulWidget> createState() {
+    return _State();
+  }
+}
+
+class _State extends State<LifecycleExample> {
+  final logs = <String>[];
+  GlobalKey _keyWrapper = GlobalKey();
+  ValueKey _key = ValueKey("FIX");
+  GlobalKey _keyContent = GlobalKey();
+
+  @override
+  Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        // TRY THIS: Try changing the color here to a specific color (to
-        // Colors.amber, perhaps?) and trigger a hot reload to see the AppBar
-        // change color while the other colors stay the same.
-        backgroundColor: Theme.of(context).colorScheme.inversePrimary,
-        // Here we take the value from the MyHomePage object that was created by
-        // the App.build method, and use it to set our appbar title.
-        title: Text(widget.title),
+        automaticallyImplyLeading: true,
       ),
-      body: LifecycleAware(
-        observer: LifecycleObserver(onCreate: (l) {
-          print("\n");
-          print("onCreate");
-          print("old = ${l.previousState.name}");
-          print(l.currentState.name);
-        }, onVisible: (l) {
-          print("\n");
-          print("onVisible");
-          print("old = ${l.previousState.name}");
-          print(l.currentState.name);
-        }, onBackground: (l) {
-          print("\n");
-          print("onBackground");
-          print("old = ${l.previousState.name}");
-          print(l.currentState.name);
-        },onDispose: (l){
-          print("\n");
-          print("onDispose");
-          print("old = ${l.previousState.name}");
-          print(l.currentState.name);
-        },onForeground: (l){
-          print("\n");
-          print("onForeground");
-          print("old = ${l.previousState.name}");
-          print(l.currentState.name);
-        },onInvisible: (l){
-          print("\n");
-          print("onInvisible");
-          print("old = ${l.previousState.name}");
-          print(l.currentState.name);
-        }),
-        builder: (BuildContext context, Lifecycle lifecycle) {
-          return Center(
-            // Center is a layout widget. It takes a single child and positions it
-            // in the middle of the parent.
-            child: Column(
-              // Column is also a layout widget. It takes a list of children and
-              // arranges them vertically. By default, it sizes itself to fit its
-              // children horizontally, and tries to be as tall as its parent.
-              //
-              // Column has various properties to control how it sizes itself and
-              // how it positions its children. Here we use mainAxisAlignment to
-              // center the children vertically; the main axis here is the vertical
-              // axis because Columns are vertical (the cross axis would be
-              // horizontal).
-              //
-              // TRY THIS: Invoke "debug painting" (choose the "Toggle Debug Paint"
-              // action in the IDE, or press "p" in the console), to see the
-              // wireframe for each widget.
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: <Widget>[
-                const Text(
-                  'You have pushed the button this many times:',
+      body: Column(
+        key: _keyWrapper,
+        children: [
+          FilledButton(
+              onPressed: () {
+                _keyWrapper = GlobalKey();
+                setState(() {});
+              },
+              child: Text("change key")),
+          LifecycleAware(
+            key: _key,
+            observer: LifecycleObserver(onCreate: (l) {
+              print("\n");
+              print("onCreate $_keyWrapper");
+              // print("old = ${l.previousState.name}");
+              // print(l.currentState.name);
+            }, onVisible: (l) {
+              print("\n");
+              print("onVisible $_keyWrapper");
+              // print("old = ${l.previousState.name}");
+              // print(l.currentState.name);
+            }, onBackground: (l) {
+              print("\n");
+              print("onBackground $_keyWrapper");
+              // print("old = ${l.previousState.name}");
+              // print(l.currentState.name);
+            }, onDispose: (l) {
+              print("\n");
+              print("onDispose $_keyWrapper");
+              // print("old = ${l.previousState.name}");
+              // print(l.currentState.name);
+            }, onForeground: (l) {
+              print("\n");
+              print("onForeground $_keyWrapper");
+              // print("old = ${l.previousState.name}");
+              // print(l.currentState.name);
+            }, onInvisible: (l) {
+              print("\n");
+              print("onInvisible $_keyWrapper");
+              // print("old = ${l.previousState.name}");
+              // print(l.currentState.name);
+            }),
+            builder: (BuildContext context, Lifecycle lifecycle) {
+              return Padding(
+                padding: EdgeInsets.all(10),
+                child: Container(
+                  width: 300,
+                  height: 600,
+                  color: Colors.amberAccent,
                 ),
-                Text(
-                  '$_counter',
-                  style: Theme.of(context).textTheme.headlineMedium,
+              );
+            },
+          )
+        ],
+      ),
+    );
+  }
+}
+
+class LifecycleListExample extends StatefulWidget {
+  @override
+  State<StatefulWidget> createState() {
+    return _ListState();
+  }
+}
+
+class _ListState extends State<LifecycleListExample> {
+  final logs = <String>[];
+  GlobalKey _keyWrapper = GlobalKey();
+  GlobalKey _key = GlobalKey();
+  GlobalKey _keyContent = GlobalKey();
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        automaticallyImplyLeading: true,
+      ),
+      body: Column(
+        key: _keyWrapper,
+        children: [
+          FilledButton(
+              onPressed: () {
+                _keyWrapper = GlobalKey();
+                setState(() {});
+              },
+              child: Text("change key")),
+          LifecycleAware(
+            key: ValueKey("FIXed"),
+            observer: LifecycleObserver(onCreate: (l) {
+              // print("\n");
+              // logs.add("onCreate");
+              // logs.add("old = ${l.previousState.name}");
+              // logs.add(l.currentState.name);
+            }, onVisible: (l) {
+              debugPrint("\n");
+              debugPrint("onVisible FIXed");
+              debugPrint("FIXed old = ${l.previousState.name}");
+              debugPrint(l.currentState.name + " FIXed");
+            }, onBackground: (l) {
+              // logs.add("\n");
+              // logs.add("onBackground");
+              // logs.add("old = ${l.previousState.name}");
+              // logs.add(l.currentState.name);
+            }, onDispose: (l) {
+              // logs.add("\n");
+              // logs.add("onDispose");
+              // logs.add("old = ${l.previousState.name}");
+              // logs.add(l.currentState.name);
+            }, onForeground: (l) {
+              // logs.add("\n");
+              // logs.add("onForeground");
+              // logs.add("old = ${l.previousState.name}");
+              // logs.add(l.currentState.name);
+            }, onInvisible: (l) {
+              // logs.add("\n");
+              // logs.add("onInvisible");
+              // logs.add("old = ${l.previousState.name}");
+              // logs.add(l.currentState.name);
+            }),
+            builder: (BuildContext context, Lifecycle lifecycle) {
+              return Padding(
+                padding: EdgeInsets.all(10),
+                child: Container(
+                  height: 100,
+                  alignment: Alignment.center,
+                  color: Colors.blueAccent,
+                  child: Text(
+                    "FIXed",
+                    style: TextStyle(fontSize: 30),
+                  ),
                 ),
-              ],
+              );
+            },
+          ),
+          Expanded(
+            child: ListView.builder(
+              itemBuilder: (c, i) {
+                return Expanded(
+                  child: LifecycleAware(
+                    key: ValueKey(i),
+                    observer: LifecycleObserver(onCreate: (l) {
+                      // logs.add("\n");
+                      // logs.add("onCreate");
+                      // logs.add("old = ${l.previousState.name}");
+                      // logs.add(l.currentState.name);
+                    }, onVisible: (l) {
+                      debugPrint("\n");
+                      debugPrint("onVisible $i");
+                      debugPrint("$i old = ${l.previousState.name}");
+                      debugPrint(l.currentState.name + " $i");
+                    }, onBackground: (l) {
+                      // logs.add("\n");
+                      // logs.add("onBackground");
+                      // logs.add("old = ${l.previousState.name}");
+                      // logs.add(l.currentState.name);
+                    }, onDispose: (l) {
+                      // logs.add("\n");
+                      // logs.add("onDispose");
+                      // logs.add("old = ${l.previousState.name}");
+                      // logs.add(l.currentState.name);
+                    }, onForeground: (l) {
+                      // logs.add("\n");
+                      // logs.add("onForeground");
+                      // logs.add("old = ${l.previousState.name}");
+                      // logs.add(l.currentState.name);
+                    }, onInvisible: (l) {
+                      // logs.add("\n");
+                      // logs.add("onInvisible");
+                      // logs.add("old = ${l.previousState.name}");
+                      // logs.add(l.currentState.name);
+                    }),
+                    builder: (BuildContext context, Lifecycle lifecycle) {
+                      return Padding(
+                        padding: EdgeInsets.all(10),
+                        child: Container(
+                          height: 100,
+                          alignment: Alignment.center,
+                          color: Colors.blueAccent,
+                          child: Text(
+                            i.toString(),
+                            style: TextStyle(fontSize: 30),
+                          ),
+                        ),
+                      );
+                    },
+                  ),
+                );
+              },
+              itemCount: 20,
             ),
-          );
-        },
+          ),
+        ],
       ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: _incrementCounter,
-        tooltip: 'Increment',
-        child: const Icon(Icons.add),
-      ), // This trailing comma makes auto-formatting nicer for build methods.
     );
   }
 }

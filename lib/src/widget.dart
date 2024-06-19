@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:focus_detector_v2/focus_detector_v2.dart';
 
+import 'focus_detector.dart';
 import 'lifecycle.dart' as lifecycle_lifecycle;
 import 'lifecycle_registry.dart';
 import 'observer.dart';
@@ -10,10 +10,12 @@ class LifecycleAware extends StatefulWidget {
   final Function(BuildContext context, lifecycle_lifecycle.Lifecycle lifecycle)
       builder;
   final LifecycleObserver? observer;
+  final double visibleThreshold;
 
   const LifecycleAware({
     super.key,
     required this.builder,
+    this.visibleThreshold = 1.0,
     this.observer,
   });
 
@@ -42,6 +44,15 @@ class LifecycleAwareState<T extends LifecycleAware> extends State<T>
   }
 
   @override
+  void didUpdateWidget(covariant T oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    if (oldWidget.visibleThreshold != widget.visibleThreshold) {
+      _focusKey.currentState?.setState(() {});
+      setState(() {});
+    }
+  }
+
+  @override
   void initState() {
     super.initState();
     WidgetsBinding.instance.addObserver(this);
@@ -62,12 +73,13 @@ class LifecycleAwareState<T extends LifecycleAware> extends State<T>
     final page = buildPage(context);
     final Widget visibleDetector = FocusDetector(
         key: _focusKey,
-        onFocusGained: () {
+        visibleThreshold: widget.visibleThreshold,
+        onVisibilityGained: () {
           if (!mounted) return;
           _lifecycleRegistry
               .handleLifecycleEvent(lifecycle_state.LifecycleEvent.onVisible);
         },
-        onFocusLost: () {
+        onVisibilityLost: () {
           if (!mounted) return;
           _lifecycleRegistry
               .handleLifecycleEvent(lifecycle_state.LifecycleEvent.onInvisible);
@@ -92,10 +104,10 @@ class LifecycleAwareState<T extends LifecycleAware> extends State<T>
   @override
   @mustCallSuper
   void dispose() {
-    super.dispose();
     WidgetsBinding.instance.removeObserver(this);
     _lifecycleRegistry
         .handleLifecycleEvent(lifecycle_state.LifecycleEvent.onDispose);
     lifecycle.clearObserver();
+    super.dispose();
   }
 }
