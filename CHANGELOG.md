@@ -1,3 +1,30 @@
+## 1.2.0
+__BREAKING CHANGE:__
+* rename api
+* add `LifecycleController`
+
+```dart
+
+          final controller = LifecycleController();
+          LifecycleAware(
+            key: ValueKey("id"),
+            controller: controller,
+            onShow: () {
+              debugPrint("onShow");
+            },
+            onHide: (){
+              
+            },
+            showVisibilityThreshold: 0.5,
+            hideVisibilityThreshold: 0.1,
+            child: xxxx,
+        );
+          
+          
+
+```
+
+
 ## 1.1.0
 * support visibleThreshold
 

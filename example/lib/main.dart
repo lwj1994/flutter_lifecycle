@@ -77,7 +77,7 @@ class _MyHomePageState extends State<MyHomePage> {
     // The Flutter framework has been optimized to make rerunning build methods
     // fast, so that you can just rebuild anything that needs updating rather
     // than having to individually change instances of widgets.
-    return LifecycleExample();
+    return LifecycleListExample();
   }
 }
 
@@ -93,6 +93,7 @@ class _State extends State<LifecycleExample> {
   GlobalKey _keyWrapper = GlobalKey();
   ValueKey _key = ValueKey("FIX");
   GlobalKey _keyContent = GlobalKey();
+  final LifecycleController controller = LifecycleController();
 
   @override
   Widget build(BuildContext context) {
@@ -105,53 +106,56 @@ class _State extends State<LifecycleExample> {
         children: [
           FilledButton(
               onPressed: () {
-                _keyWrapper = GlobalKey();
-                setState(() {});
+                controller.trigger();
               },
               child: Text("change key")),
           LifecycleAware(
             key: _key,
-            observer: LifecycleObserver(onCreate: (l) {
+            onCreate: () {
               print("\n");
               print("onCreate $_keyWrapper");
               // print("old = ${l.previousState.name}");
               // print(l.currentState.name);
-            }, onVisible: (l) {
+            },
+            controller: controller,
+            onShow: () {
               print("\n");
               print("onVisible $_keyWrapper");
               // print("old = ${l.previousState.name}");
               // print(l.currentState.name);
-            }, onBackground: (l) {
-              print("\n");
-              print("onBackground $_keyWrapper");
-              // print("old = ${l.previousState.name}");
-              // print(l.currentState.name);
-            }, onDispose: (l) {
-              print("\n");
-              print("onDispose $_keyWrapper");
-              // print("old = ${l.previousState.name}");
-              // print(l.currentState.name);
-            }, onForeground: (l) {
-              print("\n");
-              print("onForeground $_keyWrapper");
-              // print("old = ${l.previousState.name}");
-              // print(l.currentState.name);
-            }, onInvisible: (l) {
+            },
+            onHide: () {
               print("\n");
               print("onInvisible $_keyWrapper");
               // print("old = ${l.previousState.name}");
               // print(l.currentState.name);
-            }),
-            builder: (BuildContext context, Lifecycle lifecycle) {
-              return Padding(
-                padding: EdgeInsets.all(10),
-                child: Container(
-                  width: 300,
-                  height: 600,
-                  color: Colors.amberAccent,
-                ),
-              );
             },
+            onDestroy: () {
+              print("\n");
+              print("onDestroy $_keyWrapper");
+              // print("old = ${l.previousState.name}");
+              // print(l.currentState.name);
+            },
+            onAppResume: () {
+              print("\n");
+              print("onForeground $_keyWrapper");
+              // print("old = ${l.previousState.name}");
+              // print(l.currentState.name);
+            },
+            onAppPause: () {
+              print("\n");
+              print("onBackground $_keyWrapper");
+              // print("old = ${l.previousState.name}");
+              // print(l.currentState.name);
+            },
+            child: Padding(
+              padding: EdgeInsets.all(10),
+              child: Container(
+                width: 300,
+                height: 600,
+                color: Colors.amberAccent,
+              ),
+            ),
           )
         ],
       ),
@@ -171,6 +175,7 @@ class _ListState extends State<LifecycleListExample> {
   GlobalKey _keyWrapper = GlobalKey();
   GlobalKey _key = GlobalKey();
   GlobalKey _keyContent = GlobalKey();
+  final LifecycleController controller = LifecycleController();
 
   @override
   Widget build(BuildContext context) {
@@ -183,109 +188,57 @@ class _ListState extends State<LifecycleListExample> {
         children: [
           FilledButton(
               onPressed: () {
-                _keyWrapper = GlobalKey();
-                setState(() {});
+                controller.trigger();
               },
               child: Text("change key")),
           LifecycleAware(
+            controller: controller,
             key: ValueKey("FIXed"),
-            observer: LifecycleObserver(onCreate: (l) {
-              // print("\n");
-              // logs.add("onCreate");
-              // logs.add("old = ${l.previousState.name}");
-              // logs.add(l.currentState.name);
-            }, onVisible: (l) {
+            onShow: () {
               debugPrint("\n");
               debugPrint("onVisible FIXed");
-              debugPrint("FIXed old = ${l.previousState.name}");
-              debugPrint(l.currentState.name + " FIXed");
-            }, onBackground: (l) {
-              // logs.add("\n");
-              // logs.add("onBackground");
-              // logs.add("old = ${l.previousState.name}");
-              // logs.add(l.currentState.name);
-            }, onDispose: (l) {
-              // logs.add("\n");
-              // logs.add("onDispose");
-              // logs.add("old = ${l.previousState.name}");
-              // logs.add(l.currentState.name);
-            }, onForeground: (l) {
-              // logs.add("\n");
-              // logs.add("onForeground");
-              // logs.add("old = ${l.previousState.name}");
-              // logs.add(l.currentState.name);
-            }, onInvisible: (l) {
-              // logs.add("\n");
-              // logs.add("onInvisible");
-              // logs.add("old = ${l.previousState.name}");
-              // logs.add(l.currentState.name);
-            }),
-            builder: (BuildContext context, Lifecycle lifecycle) {
-              return Padding(
-                padding: EdgeInsets.all(10),
-                child: Container(
-                  height: 100,
-                  alignment: Alignment.center,
-                  color: Colors.blueAccent,
-                  child: Text(
-                    "FIXed",
-                    style: TextStyle(fontSize: 30),
-                  ),
-                ),
-              );
             },
+            child: Padding(
+              padding: EdgeInsets.all(10),
+              child: Container(
+                height: 100,
+                alignment: Alignment.center,
+                color: Colors.blueAccent,
+                child: Text(
+                  "FIXed",
+                  style: TextStyle(fontSize: 30),
+                ),
+              ),
+            ),
           ),
           Expanded(
             child: ListView.builder(
               itemBuilder: (c, i) {
-                return Expanded(
-                  child: LifecycleAware(
-                    key: ValueKey(i),
-                    observer: LifecycleObserver(onCreate: (l) {
-                      // logs.add("\n");
-                      // logs.add("onCreate");
-                      // logs.add("old = ${l.previousState.name}");
-                      // logs.add(l.currentState.name);
-                    }, onVisible: (l) {
-                      debugPrint("\n");
-                      debugPrint("onVisible $i");
-                      debugPrint("$i old = ${l.previousState.name}");
-                      debugPrint(l.currentState.name + " $i");
-                    }, onBackground: (l) {
-                      // logs.add("\n");
-                      // logs.add("onBackground");
-                      // logs.add("old = ${l.previousState.name}");
-                      // logs.add(l.currentState.name);
-                    }, onDispose: (l) {
-                      // logs.add("\n");
-                      // logs.add("onDispose");
-                      // logs.add("old = ${l.previousState.name}");
-                      // logs.add(l.currentState.name);
-                    }, onForeground: (l) {
-                      // logs.add("\n");
-                      // logs.add("onForeground");
-                      // logs.add("old = ${l.previousState.name}");
-                      // logs.add(l.currentState.name);
-                    }, onInvisible: (l) {
-                      // logs.add("\n");
-                      // logs.add("onInvisible");
-                      // logs.add("old = ${l.previousState.name}");
-                      // logs.add(l.currentState.name);
-                    }),
-                    builder: (BuildContext context, Lifecycle lifecycle) {
-                      return Padding(
-                        padding: EdgeInsets.all(10),
-                        child: Container(
-                          height: 100,
-                          alignment: Alignment.center,
-                          color: Colors.blueAccent,
-                          child: Text(
-                            i.toString(),
-                            style: TextStyle(fontSize: 30),
-                          ),
+                return LifecycleAware(
+                  key: ValueKey(i),
+                  showVisibilityThreshold: 0.5,
+                  hideVisibilityThreshold: 0.2,
+                  onShow: () {
+                    debugPrint("onShow $i");
+                  },
+                  onHide: () {
+                    debugPrint("onHide $i");
+                  },
+                  child: Padding(
+                    padding: EdgeInsets.only(top: 2),
+                    child: Container(
+                      height: 100,
+                      alignment: Alignment.bottomCenter,
+                      color: Colors.blueAccent,
+                      child: Container(
+                        height: 100 * 0.2,
+                        color: Colors.amber,
+                        child: Text(
+                          i.toString(),
+                          style: TextStyle(fontSize: 14),
                         ),
-                      );
-                    },
+                      ),
+                    ),
                   ),
                 );
               },
