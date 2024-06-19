@@ -57,8 +57,8 @@ class LifecycleAwareState extends State<LifecycleAware> {
   void initState() {
     assert(widget.showVisibilityThreshold > widget.hideVisibilityThreshold);
     widget.onCreate?.call();
-    _controller._update(LifecycleState.created);
-    _controller._triggerNotifier.addListener(() {
+    _controller._initState();
+    _controller._triggerNotifier?.addListener(() {
       _notifyVisibilityStatusChange(
         _lastVisibleFraction,
         force: true,
@@ -198,9 +198,9 @@ class LifecycleAwareState extends State<LifecycleAware> {
 
   @override
   void dispose() {
+    widget.onDestroy?.call();
     _appLifecycleListener.dispose();
     _controller._dispose();
-    widget.onDestroy?.call();
     super.dispose();
   }
 }
@@ -208,13 +208,18 @@ class LifecycleAwareState extends State<LifecycleAware> {
 class LifecycleController {
   LifecycleState _state = LifecycleState.created;
   LifecycleState? _previousState;
-  final ValueNotifier<int> _triggerNotifier = ValueNotifier(0);
+  ValueNotifier<int>? _triggerNotifier;
 
   LifecycleController();
 
   LifecycleState? get previousState => _previousState;
 
   LifecycleState get state => _state;
+
+  void _initState() {
+    _triggerNotifier = ValueNotifier(0);
+    _update(LifecycleState.created);
+  }
 
   void _update(LifecycleState state) {
     _previousState = _state;
@@ -223,11 +228,14 @@ class LifecycleController {
 
   // trigger current callback
   trigger() {
-    _triggerNotifier.value = _triggerNotifier.value + 1;
+    if (_triggerNotifier != null) {
+      _triggerNotifier!.value = _triggerNotifier!.value + 1;
+    }
   }
 
   void _dispose() {
-    _triggerNotifier.dispose();
+    _update(LifecycleState.destroyed);
+    _triggerNotifier?.dispose();
     _state = LifecycleState.destroyed;
   }
 }
