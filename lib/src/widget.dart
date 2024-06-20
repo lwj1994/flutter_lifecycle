@@ -108,7 +108,7 @@ class LifecycleAwareState extends State<LifecycleAware> {
         _notifyAppLifecycleChanged(AppLifecycleState.resumed);
         break;
       case AppLifecycleListenerCallback.onHide:
-        _notifyAppLifecycleChanged(AppLifecycleState.paused);
+        _notifyAppLifecycleChanged(AppLifecycleState.hidden);
         break;
     }
   }
@@ -127,10 +127,10 @@ class LifecycleAwareState extends State<LifecycleAware> {
       return;
     }
 
-    final isAppPaused = state == AppLifecycleState.hidden;
-    if (isAppPaused && wasResumed) {
+    final isAppHidden = state == AppLifecycleState.hidden;
+    if (isAppHidden && wasResumed) {
       _isAppResumed = false;
-      _notifyAppPaused();
+      _notifyAppHidden();
     }
   }
 
@@ -206,7 +206,7 @@ class LifecycleAwareState extends State<LifecycleAware> {
     _notifyShow();
   }
 
-  void _notifyAppPaused() {
+  void _notifyAppHidden() {
     _notifyHidden();
     final onAppPause = widget.onAppPause;
     if (onAppPause != null) {
