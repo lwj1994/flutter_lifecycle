@@ -1,3 +1,6 @@
+## 1.3.0+1
+* support custom appLifecycleListener
+
 ## 1.2.0
 __BREAKING CHANGE:__
 * rename api
