@@ -19,12 +19,14 @@ class LifecycleAware extends StatefulWidget {
     super.key,
     this.showVisibilityThreshold = 1,
     this.hideVisibilityThreshold = 0,
+    this.appLifecycleListenerCallbackNotifier,
   });
 
   final LifecycleController? controller;
   final double showVisibilityThreshold;
   final double hideVisibilityThreshold;
-
+  final ValueNotifier<AppLifecycleListenerCallback?>?
+      appLifecycleListenerCallbackNotifier;
   final VoidCallback? onCreate;
   final VoidCallback? onShow;
   final VoidCallback? onHide;
@@ -43,9 +45,11 @@ class LifecycleAware extends StatefulWidget {
 }
 
 class LifecycleAwareState extends State<LifecycleAware> {
-  late final AppLifecycleListener _appLifecycleListener;
-  AppLifecycleState? _appState;
+  AppLifecycleListener? _appLifecycleListener;
   late final _controller = widget.controller ?? LifecycleController();
+  late final _appLifecycleListenerCallbackNotifier =
+      widget.appLifecycleListenerCallbackNotifier ??
+          ValueNotifier<AppLifecycleListenerCallback?>(null);
   final _visibilityDetectorKey = UniqueKey();
 
   double _lastVisibleFraction = 0;
@@ -64,24 +68,31 @@ class LifecycleAwareState extends State<LifecycleAware> {
         force: true,
       );
     });
-    _appState = SchedulerBinding.instance.lifecycleState;
-    _isAppResumed = _appState == AppLifecycleState.resumed;
-    _appLifecycleListener = AppLifecycleListener(
-      onShow: () {
-        _notifyAppLifecycleChanged(AppLifecycleState.resumed);
-      },
-      onResume: () {},
-      onHide: () {
-        _notifyAppLifecycleChanged(AppLifecycleState.hidden);
-      },
-      onInactive: () {},
-      onPause: () {},
-      onDetach: () {},
-      onRestart: () {},
-      // This fires for each state change. Callbacks above fire only for
-      // specific state transitions.
-      onStateChange: _handleAppStateChange,
-    );
+
+    _appLifecycleListenerCallbackNotifier.addListener(_onAppLifecycleStateCall);
+
+    // default flutter AppLifecycleListener
+    if (widget.appLifecycleListenerCallbackNotifier == null) {
+      _isAppResumed =
+          SchedulerBinding.instance.lifecycleState == AppLifecycleState.resumed;
+      _appLifecycleListener = AppLifecycleListener(
+        onShow: () {
+          _appLifecycleListenerCallbackNotifier.value =
+              AppLifecycleListenerCallback.onShow;
+        },
+        onResume: () {},
+        onHide: () {
+          _appLifecycleListenerCallbackNotifier.value =
+              AppLifecycleListenerCallback.onHide;
+        },
+        onInactive: () {},
+        onPause: () {},
+        onDetach: () {},
+        onRestart: () {},
+      );
+    } else {
+      _isAppResumed = true;
+    }
 
     if (widget.isWidgetTest == true) {
       VisibilityDetectorController.instance.updateInterval = Duration.zero;
@@ -89,10 +100,17 @@ class LifecycleAwareState extends State<LifecycleAware> {
     super.initState();
   }
 
-  void _handleAppStateChange(AppLifecycleState state) {
-    setState(() {
-      _appState = state;
-    });
+  void _onAppLifecycleStateCall() {
+    switch (_appLifecycleListenerCallbackNotifier.value) {
+      case null:
+        break;
+      case AppLifecycleListenerCallback.onShow:
+        _notifyAppLifecycleChanged(AppLifecycleState.resumed);
+        break;
+      case AppLifecycleListenerCallback.onHide:
+        _notifyAppLifecycleChanged(AppLifecycleState.paused);
+        break;
+    }
   }
 
   /// Notifies app's transitions to/from the foreground.
@@ -198,8 +216,9 @@ class LifecycleAwareState extends State<LifecycleAware> {
 
   @override
   void dispose() {
+    _appLifecycleListenerCallbackNotifier.removeListener(_onAppLifecycleStateCall);
     widget.onDestroy?.call();
-    _appLifecycleListener.dispose();
+    _appLifecycleListener?.dispose();
     _controller._dispose();
     super.dispose();
   }
@@ -238,4 +257,9 @@ class LifecycleController {
     _triggerNotifier?.dispose();
     _state = LifecycleState.destroyed;
   }
+}
+
+enum AppLifecycleListenerCallback {
+  onShow,
+  onHide,
 }
