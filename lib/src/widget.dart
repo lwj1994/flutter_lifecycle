@@ -18,6 +18,8 @@ class LifecycleAware extends StatefulWidget {
     this.isWidgetTest,
     super.key,
     this.showVisibilityThreshold = 1,
+    this.callShowOnAppResume = false,
+    this.callHideOnAppPause = false,
     this.hideVisibilityThreshold = 0,
     this.appLifecycleListenerCallbackNotifier,
   });
@@ -33,6 +35,8 @@ class LifecycleAware extends StatefulWidget {
   final VoidCallback? onDestroy;
   final VoidCallback? onAppResume;
   final VoidCallback? onAppPause;
+  final bool callShowOnAppResume;
+  final bool callHideOnAppPause;
 
   /// The widget below this widget in the tree.
   final Widget child;
@@ -203,11 +207,15 @@ class LifecycleAwareState extends State<LifecycleAware> {
     if (onAppResume != null) {
       onAppResume();
     }
-    _notifyShow();
+    if (widget.callShowOnAppResume) {
+      _notifyShow();
+    }
   }
 
   void _notifyAppHidden() {
-    _notifyHidden();
+    if (widget.callHideOnAppPause) {
+      _notifyHidden();
+    }
     final onAppPause = widget.onAppPause;
     if (onAppPause != null) {
       onAppPause();
@@ -216,7 +224,8 @@ class LifecycleAwareState extends State<LifecycleAware> {
 
   @override
   void dispose() {
-    _appLifecycleListenerCallbackNotifier.removeListener(_onAppLifecycleStateCall);
+    _appLifecycleListenerCallbackNotifier
+        .removeListener(_onAppLifecycleStateCall);
     widget.onDestroy?.call();
     _appLifecycleListener?.dispose();
     _controller._dispose();
