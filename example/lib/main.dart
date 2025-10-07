@@ -77,11 +77,13 @@ class _MyHomePageState extends State<MyHomePage> {
     // The Flutter framework has been optimized to make rerunning build methods
     // fast, so that you can just rebuild anything that needs updating rather
     // than having to individually change instances of widgets.
-    return LifecycleListExample();
+    return const LifecycleListExample();
   }
 }
 
 class LifecycleExample extends StatefulWidget {
+  const LifecycleExample({super.key});
+
   @override
   State<StatefulWidget> createState() {
     return _State();
@@ -90,9 +92,9 @@ class LifecycleExample extends StatefulWidget {
 
 class _State extends State<LifecycleExample> {
   final logs = <String>[];
-  GlobalKey _keyWrapper = GlobalKey();
-  ValueKey _key = ValueKey("FIX");
-  GlobalKey _keyContent = GlobalKey();
+  final GlobalKey _keyWrapper = GlobalKey();
+  final ValueKey _key = const ValueKey("FIX");
+  final GlobalKey _keyContent = GlobalKey();
   final LifecycleController controller = LifecycleController();
 
   @override
@@ -108,7 +110,7 @@ class _State extends State<LifecycleExample> {
               onPressed: () {
                 controller.trigger();
               },
-              child: Text("change key")),
+              child: const Text("change key")),
           LifecycleAware(
             key: _key,
             onCreate: () {
@@ -149,7 +151,7 @@ class _State extends State<LifecycleExample> {
               // print(l.currentState.name);
             },
             child: Padding(
-              padding: EdgeInsets.all(10),
+              padding: const EdgeInsets.all(10),
               child: Container(
                 width: 300,
                 height: 600,
@@ -164,6 +166,8 @@ class _State extends State<LifecycleExample> {
 }
 
 class LifecycleListExample extends StatefulWidget {
+  const LifecycleListExample({super.key});
+
   @override
   State<StatefulWidget> createState() {
     return _ListState();
@@ -172,9 +176,9 @@ class LifecycleListExample extends StatefulWidget {
 
 class _ListState extends State<LifecycleListExample> {
   final logs = <String>[];
-  GlobalKey _keyWrapper = GlobalKey();
-  GlobalKey _key = GlobalKey();
-  GlobalKey _keyContent = GlobalKey();
+  final GlobalKey _keyWrapper = GlobalKey();
+  final GlobalKey _key = GlobalKey();
+  final GlobalKey _keyContent = GlobalKey();
   final LifecycleController controller = LifecycleController();
 
   @override
@@ -190,21 +194,21 @@ class _ListState extends State<LifecycleListExample> {
               onPressed: () {
                 controller.trigger();
               },
-              child: Text("change key")),
+              child: const Text("change key")),
           LifecycleAware(
             controller: controller,
-            key: ValueKey("FIXed"),
+            key: const ValueKey("FIXed"),
             onShow: () {
               debugPrint("\n");
               debugPrint("onVisible FIXed");
             },
             child: Padding(
-              padding: EdgeInsets.all(10),
+              padding: const EdgeInsets.all(10),
               child: Container(
                 height: 100,
                 alignment: Alignment.center,
                 color: Colors.blueAccent,
-                child: Text(
+                child: const Text(
                   "FIXed",
                   style: TextStyle(fontSize: 30),
                 ),
@@ -225,7 +229,7 @@ class _ListState extends State<LifecycleListExample> {
                     debugPrint("onHide $i");
                   },
                   child: Padding(
-                    padding: EdgeInsets.only(top: 2),
+                    padding: const EdgeInsets.only(top: 2),
                     child: Container(
                       height: 100,
                       alignment: Alignment.bottomCenter,
@@ -235,7 +239,7 @@ class _ListState extends State<LifecycleListExample> {
                         color: Colors.amber,
                         child: Text(
                           i.toString(),
-                          style: TextStyle(fontSize: 14),
+                          style: const TextStyle(fontSize: 14),
                         ),
                       ),
                     ),
